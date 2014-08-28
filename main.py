@@ -1,11 +1,11 @@
 from Tkinter import *
 from sys import *
-from os import *
+import os
 import time
 
 
 global inprocess
-inprocess = 0
+inprocess = False
 
 # -------------GUI ------------------
 
@@ -31,24 +31,18 @@ def button(_text, _row, _column, _command):
 	b = Button(text=str(_text), command = _command)
 	b.grid(row=_row, column=_column)
 
-def start_button(start):
-	
-	global start_button_text
-	
-	if start == True:
-		start_button_text = "Stop"
-	if start == False:
-		start_button_text = "Start"
-	
 
 # ------------------Timer Programm ---------
 
 
-def final_time(start_time, end_time):
-
-	global final_time
-	final_time = end_time - start_time
-	print final_time
+def final_time():
+	global e_time
+	global s_time
+	f_time = e_time - s_time
+	print f_time
+	date()
+	file_name = "test"
+	write(file_name, f_time)
 
 def space_event(event):
 	wire()
@@ -56,36 +50,39 @@ def space_event(event):
 def wire():
 
 	global inprocess
-	inprocess = inprocess + 1
 
-	if inprocess == 1:
-		start_time()
-
-	if inprocess == 2:
+	if inprocess == False:
+		start_time()	
+	else: 
 		end_time()
-
+		
 
 def start_time():
-	start_time = time.time()
+	global inprocess
+	inprocess = True
+	global s_time
+	s_time = time.time()
 	print "Timer started..."
-	return start_time
+
 
 def end_time():
-	end_time = time.time()
+	global inprocess
+	inprocess = False
+	global e_time
+	e_time = time.time()
 	print "... Timer stopt."
-	return end_time
-
 	final_time()
 
 def date():
+	global local_time
 	local_time = time.asctime(time.localtime(time.time()))
-	return local_time
 
-def write(file_name, final_time, date):
+def write(file_name, final_time):
+	global local_time
 	temp_data = open(file_name, "a")
-	content = str(round(final_time, 3)) + "[" + str(date) + "]"
+	content = str(round(final_time, 3)) + "			[" + str(local_time) + "]\n"
 	temp_data.write(content)
 	temp_data.close()
-	print "time saved"
+	print "time written in %r" %(file_name)
 
 main()
